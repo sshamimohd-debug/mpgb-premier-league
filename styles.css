@@ -54,8 +54,7 @@ body{
 .hidden{display:none}
 
 .tabs{
-  display:flex;
-  gap:8px;
+  display:flex; gap:8px;
   padding:10px 12px;
   overflow:auto;
   border-bottom:1px solid var(--line);
@@ -135,6 +134,19 @@ textarea{min-height:90px; resize:vertical}
 .bigScore{font-size:26px; font-weight:1000; letter-spacing:.2px}
 .smallRow{display:flex; gap:10px; flex-wrap:wrap; color:var(--muted); font-size:12px; font-weight:800}
 
+.ticker{
+  margin-top:10px;
+  padding:10px 12px;
+  border-radius:16px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.06);
+  display:flex; gap:10px; flex-wrap:wrap;
+  font-weight:900; font-size:12px;
+}
+.ticker b{color:var(--text)}
+.ticker .good{color:var(--good)}
+.ticker .warn{color:var(--warn)}
+
 .ballRow{display:flex; gap:6px; flex-wrap:wrap}
 .ball{
   width:26px;height:26px;border-radius:9px;
@@ -146,6 +158,7 @@ textarea{min-height:90px; resize:vertical}
 .ball.w{background:rgba(255,92,119,.14); border-color:rgba(255,92,119,.35)}
 .ball.b4{background:rgba(255,255,255,.10)}
 .ball.b6{background:rgba(61,220,151,.16); border-color:rgba(61,220,151,.35)}
+.ball.ex{background:rgba(255,204,102,.12); border-color:rgba(255,204,102,.35)}
 
 .keypad{
   display:grid;
@@ -166,3 +179,18 @@ textarea{min-height:90px; resize:vertical}
 .kbtn.good{background:rgba(61,220,151,.16); border-color:rgba(61,220,151,.35)}
 .kbtn.bad{background:rgba(255,92,119,.14); border-color:rgba(255,92,119,.35)}
 .kbtn.warn{background:rgba(255,204,102,.12); border-color:rgba(255,204,102,.35)}
+
+.toast{
+  position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
+  max-width:min(720px, calc(100vw - 24px));
+  padding:12px 14px;
+  border-radius:16px;
+  border:1px solid var(--line);
+  background:rgba(18,27,46,.92);
+  box-shadow: 0 12px 34px rgba(0,0,0,.28);
+  color:var(--text);
+  z-index:99;
+  display:none;
+  font-weight:800;
+}
+.toast.show{display:block}
