@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MPGB Team Squads</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body { font-family: Arial; padding: 15px; background: #f5f5f5; }
+    h2 { text-align: center; }
+    select { width: 100%; padding: 10px; font-size: 16px; }
+    .player {
+      background: #fff;
+      padding: 10px;
+      margin-top: 8px;
+      border-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .role { font-weight: bold; color: #0a4; }
+  </style>
+</head>
+<body>
+
+<h2>🏏 Team Squad</h2>
+
+<select id="teamSelect">
+  <option value="">-- Team Select करें --</option>
+</select>
+
+<div id="squadList"></div>
+
+<!-- Squad Data -->
+<script src="../js/squads.js"></script>
+
+<script>
+  const teamSelect = document.getElementById("teamSelect");
+  const squadList = document.getElementById("squadList");
+
+  // dropdown fill
+  Object.keys(TEAM_SQUADS).forEach(team => {
+    const opt = document.createElement("option");
+    opt.value = team;
+    opt.textContent = team;
+    teamSelect.appendChild(opt);
+  });
+
+  teamSelect.addEventListener("change", () => {
+    squadList.innerHTML = "";
+    const team = teamSelect.value;
+    if (!team) return;
+
+    TEAM_SQUADS[team].forEach(p => {
+      const div = document.createElement("div");
+      div.className = "player";
+      div.innerHTML = `
+        <div><b>${p.name}</b></div>
+        <div class="role">${p.role}</div>
+        <div>Speciality: ${p.speciality}</div>
+      `;
+      squadList.appendChild(div);
+    });
+  });
+</script>
+
+</body>
+</html>
