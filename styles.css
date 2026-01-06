@@ -194,3 +194,44 @@ textarea{min-height:90px; resize:vertical}
   font-weight:800;
 }
 .toast.show{display:block}
+
+/* ---------- Mobile polish ---------- */
+.only-mobile{display:none}
+.only-desktop{display:block}
+
+@media (max-width: 720px){
+  .only-desktop{display:none}
+  .only-mobile{display:block}
+
+  .container{padding:12px}
+  .topbar{padding:10px 12px}
+  .logo{width:40px;height:40px;border-radius:12px}
+  .bt1{font-size:13px}
+  .bt2{font-size:11px}
+
+  .btn{padding:12px 12px;border-radius:16px}
+  .tab{padding:10px 12px;font-size:13px}
+
+  .card{padding:12px;border-radius:18px}
+  .card h2{font-size:15px}
+
+  .table{font-size:12px}
+  .table th,.table td{padding:8px 8px}
+
+  .bigScore{font-size:24px}
+  .ball{width:28px;height:28px;border-radius:10px}
+}
+
+/* Mobile list cards (replacement for wide tables) */
+.mlist{display:grid;gap:10px}
+.mitem{
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.06);
+  border-radius:16px;
+  padding:12px;
+}
+.mhead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.mtitle{font-weight:1000}
+.mmeta{color:var(--muted);font-size:12px;font-weight:800;margin-top:4px}
+.mrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;color:var(--muted);font-size:12px;font-weight:900}
+.mrow b{color:var(--text)}
