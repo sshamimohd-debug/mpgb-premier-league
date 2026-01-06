@@ -12,13 +12,6 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
-<script src="firebase.js"></script>
-<script src="matches_page.js"></script>
-
 <body>
   <header class="topbar">
     <div class="brand">
@@ -44,20 +37,24 @@
     <section id="matchList" class="mlist"></section>
   </main>
 
-  <footer class="footer">
-    <span>Live view + Scorer console (PIN) • Realtime via Firebase (optional)</span>
+    <footer class="footer">
+    <span>Public Live View • Compact & mobile friendly</span>
   </footer>
 
+  <!-- Firebase SDKs (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <!-- Firebase config/init -->
+  <script src="firebase.js"></script>
+
+  <!-- Demo data (only used when Firebase disabled) -->
   <script src="data.js"></script>
 
-  <!-- Firebase compat (only used if config is pasted) -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
-
-  <script src="firebase.js"></script>
+  <!-- App scripts -->
   <script src="scoring_engine.js"></script>
   <script src="realtime.js"></script>
-  <script src="matches_page.js"></script>
+  <script src="live_page.js"></script>
 </body>
 </html>
