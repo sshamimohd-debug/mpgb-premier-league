@@ -308,11 +308,30 @@ function renderTeams(){
     const grp = IOM.groups[g];
     return `<tr><td><b>Group ${g}</b></td><td>${esc(grp.venue)}</td><td>${grp.teams.map(esc).join(", ")}</td></tr>`;
   }).join("");
+  const cards = ["A","B","C","D"].map(g=>{
+    const grp = IOM.groups[g];
+    return `
+      <div class="mitem">
+        <div class="mhead">
+          <div>
+            <div class="mtitle">Group ${esc(g)}</div>
+            <div class="mmeta">Venue: <b>${esc(grp.venue)}</b></div>
+          </div>
+        </div>
+        <div class="mrow">Teams: <b>${grp.teams.map(esc).join(", ")}</b></div>
+      </div>
+    `;
+  }).join("");
+
   card.innerHTML += `
-    <table class="table">
-      <thead><tr><th>Group</th><th>Venue</th><th>Teams</th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table>
+    <div class="only-desktop">
+      <table class="table">
+        <thead><tr><th>Group</th><th>Venue</th><th>Teams</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+
+    <div class="only-mobile mlist">${cards}</div>
   `;
   const wrap = document.createElement("div");
   wrap.className="grid";
@@ -336,11 +355,34 @@ function renderSchedule(){
       <td><button class="btn primary" data-live="${esc(m.id)}">Open</button></td>
     </tr>
   `).join("");
+  const cards = st.matches.map(m=>`
+    <div class="mitem">
+      <div class="mhead">
+        <div>
+          <div class="mtitle">${esc(m.team1)} vs ${esc(m.team2)}</div>
+          <div class="mmeta">Match <b>${esc(m.id)}</b> • Group <b>${esc(m.group)}</b></div>
+        </div>
+        <div><span class="badge">${esc(m.status)}</span></div>
+      </div>
+      <div class="mrow">
+        <span>Venue: <b>${esc(m.venue)}</b></span>
+        <span>Time: <b>${esc(m.time)}</b></span>
+      </div>
+      <div style="margin-top:10px">
+        <button class="btn primary" data-live="${esc(m.id)}">Open</button>
+      </div>
+    </div>
+  `).join("");
+
   card.innerHTML += `
-    <table class="table">
-      <thead><tr><th>ID</th><th>Group</th><th>Venue</th><th>Time</th><th>Match</th><th>Status</th><th></th></tr></thead>
-      <tbody>${items}</tbody>
-    </table>
+    <div class="only-desktop">
+      <table class="table">
+        <thead><tr><th>ID</th><th>Group</th><th>Venue</th><th>Time</th><th>Match</th><th>Status</th><th></th></tr></thead>
+        <tbody>${items}</tbody>
+      </table>
+    </div>
+
+    <div class="only-mobile mlist">${cards}</div>
   `;
   const wrap=document.createElement("div"); wrap.className="grid"; wrap.append(card);
 
@@ -484,11 +526,29 @@ function renderNomination(){
           <td class="muted">${esc(new Date(x.ts).toLocaleString())}</td>
         </tr>
       `).join("");
+      const cards = st.nominations.map(x=>`
+        <div class="mitem">
+          <div class="mhead">
+            <div>
+              <div class="mtitle">${esc(x.player)} <span class="muted">(${esc(x.region)})</span></div>
+              <div class="mmeta">ID: <b>${esc(x.id)}</b> • Role: <b>${esc(x.role)}</b></div>
+            </div>
+          </div>
+          <div class="mrow">
+            <span>Mobile: <b>${esc(x.mobile)}</b></span>
+            <span>Saved: <b>${esc(new Date(x.ts).toLocaleString())}</b></span>
+          </div>
+        </div>
+      `).join("");
+
       $("#n_table").innerHTML=`
-        <table class="table">
-          <thead><tr><th>ID</th><th>Player</th><th>Region</th><th>Mobile</th><th>Role</th><th>Saved</th></tr></thead>
-          <tbody>${rows || `<tr><td colspan="6" class="muted">No saved nominations</td></tr>`}</tbody>
-        </table>
+        <div class="only-desktop">
+          <table class="table">
+            <thead><tr><th>ID</th><th>Player</th><th>Region</th><th>Mobile</th><th>Role</th><th>Saved</th></tr></thead>
+            <tbody>${rows || `<tr><td colspan="6" class="muted">No saved nominations</td></tr>`}</tbody>
+          </table>
+        </div>
+        <div class="only-mobile mlist">${cards || `<div class="mitem"><div class="muted">No saved nominations</div></div>`}</div>
       `;
     });
   },0);
@@ -943,36 +1003,70 @@ function renderLivePanel(matchId){
 
     <div class="card" style="margin-top:12px">
       <h2>Scorecard – ${esc(inn.battingTeam)}</h2>
-      <table class="table">
-        <thead><tr><th>Batter</th><th>R</th><th>B</th><th>4s</th><th>6s</th><th>Status</th></tr></thead>
-        <tbody>
-          ${(inn.batters.length?inn.batters:[]).map(b=>`
-            <tr>
-              <td><b>${esc(b.name)}</b>${(b.id===inn.strikerId)?" *":""}</td>
-              <td>${b.r}</td><td>${b.b}</td><td>${b.f4}</td><td>${b.f6}</td>
-              <td class="muted">${b.out?esc(b.how):"not out"}</td>
-            </tr>
-          `).join("") || `<tr><td colspan="6" class="muted">No batting data yet</td></tr>`}
-        </tbody>
-      </table>
+      <div class="only-desktop">
+        <table class="table">
+          <thead><tr><th>Batter</th><th>R</th><th>B</th><th>4s</th><th>6s</th><th>Status</th></tr></thead>
+          <tbody>
+            ${(inn.batters.length?inn.batters:[]).map(b=>`
+              <tr>
+                <td><b>${esc(b.name)}</b>${(b.id===inn.strikerId)?" *":""}</td>
+                <td>${b.r}</td><td>${b.b}</td><td>${b.f4}</td><td>${b.f6}</td>
+                <td class="muted">${b.out?esc(b.how):"not out"}</td>
+              </tr>
+            `).join("") || `<tr><td colspan="6" class="muted">No batting data yet</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="only-mobile mlist">
+        ${(inn.batters.length?inn.batters:[]).map(b=>`
+          <div class="mitem">
+            <div class="mhead">
+              <div>
+                <div class="mtitle">${esc(b.name)}${(b.id===inn.strikerId)?" *":""}</div>
+                <div class="mmeta">${b.out?esc(b.how):"not out"}</div>
+              </div>
+              <div class="badge">${b.r} (${b.b})</div>
+            </div>
+            <div class="mrow"><span>4s: <b>${b.f4}</b></span><span>6s: <b>${b.f6}</b></span></div>
+          </div>
+        `).join("") || `<div class="mitem"><div class="muted">No batting data yet</div></div>`}
+      </div>
 
       <div class="hr"></div>
 
       <h2>Bowling – ${esc(inn.bowlingTeam)}</h2>
-      <table class="table">
-        <thead><tr><th>Bowler</th><th>O</th><th>R</th><th>W</th><th>Econ</th></tr></thead>
-        <tbody>
-          ${(inn.bowlers.length?inn.bowlers:[]).map(b=>`
-            <tr>
-              <td><b>${esc(b.name)}</b></td>
-              <td>${bowlerOvers(b)}</td>
-              <td>${b.runs}</td>
-              <td>${b.wkts}</td>
-              <td>${(b.balls? (b.runs/(b.balls/6)).toFixed(2) : "0.00")}</td>
-            </tr>
-          `).join("") || `<tr><td colspan="5" class="muted">No bowling data yet</td></tr>`}
-        </tbody>
-      </table>
+      <div class="only-desktop">
+        <table class="table">
+          <thead><tr><th>Bowler</th><th>O</th><th>R</th><th>W</th><th>Econ</th></tr></thead>
+          <tbody>
+            ${(inn.bowlers.length?inn.bowlers:[]).map(b=>`
+              <tr>
+                <td><b>${esc(b.name)}</b></td>
+                <td>${bowlerOvers(b)}</td>
+                <td>${b.runs}</td>
+                <td>${b.wkts}</td>
+                <td>${(b.balls? (b.runs/(b.balls/6)).toFixed(2) : "0.00")}</td>
+              </tr>
+            `).join("") || `<tr><td colspan="5" class="muted">No bowling data yet</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="only-mobile mlist">
+        ${(inn.bowlers.length?inn.bowlers:[]).map(b=>`
+          <div class="mitem">
+            <div class="mhead">
+              <div>
+                <div class="mtitle">${esc(b.name)}</div>
+                <div class="mmeta">Overs: <b>${bowlerOvers(b)}</b> • Econ: <b>${(b.balls? (b.runs/(b.balls/6)).toFixed(2) : "0.00")}</b></div>
+              </div>
+              <div class="badge">W: ${b.wkts}</div>
+            </div>
+            <div class="mrow"><span>Runs: <b>${b.runs}</b></span></div>
+          </div>
+        `).join("") || `<div class="mitem"><div class="muted">No bowling data yet</div></div>`}
+      </div>
     </div>
   `;
 }
