@@ -1,47 +1,89 @@
-(function(){
-  const $ = (s, el=document)=>el.querySelector(s);
-  const esc = (s)=> (s??"").toString().replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+(function () {
+  const $ = (s, el = document) => el.querySelector(s);
   const params = new URLSearchParams(location.search);
   const matchId = params.get("matchId") || "m1";
 
-  $("#backLive").href = `live.html?matchId=${encodeURIComponent(matchId)}`;
+  /***********************
+   * 🔐 SCORER PIN CONFIG
+   ***********************/
+  const SCORER_PIN = "1011";   // 👈 यही PIN है (yahan change kar sakte ho)
+  let scorerUnlocked = false;
 
-  initRealtime();
+  /***********************
+   * Init realtime
+   ***********************/
+  if (typeof initRealtime === "function") initRealtime();
 
-  const banner = $("#fbBanner");
-  if(!RT.ready){
-    banner.style.display="block";
-    banner.textContent = "Firebase not configured. Showing demo scorecard.";
-  }
+  /***********************
+   * PIN MODAL HANDLING
+   ***********************/
+  document.addEventListener("DOMContentLoaded", () => {
+    const pinModal = $("#pinModal");
+    const pinInput = $("#pinInput");
+    const pinOk = $("#pinOk");
+    const pinCancel = $("#pinCancel");
+    const pinMsg = $("#pinMsg");
 
-  function render(doc){
-    const match = doc?.a && doc?.b ? doc : (scheduleToMatches().find(x=>x.matchId===matchId) || {a:"Team A", b:"Team B", venue:"", group:""});
-    const st = doc?.liveState || newLiveState({matchId});
-    const hist = Array.isArray(doc?.history) ? doc.history.slice().reverse() : [];
+    // Show PIN modal on load
+    if (pinModal) pinModal.style.display = "flex";
 
-    $("#hdr").innerHTML = `
-      <div class="row between">
-        <div>
-          <div class="h2">${esc(match.a)} <span class="muted">vs</span> ${esc(match.b)}</div>
-          <div class="muted">${esc(match.group||"")} • ${esc(match.venue||"")}</div>
-        </div>
-        <div class="bigscore compact">
-          <div class="runs">${st.runs}<span class="muted">/${st.wkts}</span></div>
-          <div class="muted">${oversTextFromBalls(st.balls)} ov • CRR ${crr(st.runs, st.balls).toFixed(2)}</div>
-        </div>
-      </div>
-      <div class="last6">${(st.last6||[]).map(x=>`<span class="ball">${esc(x)}</span>`).join("")}</div>
-    `;
-
-    $("#events").innerHTML = hist.length
-      ? hist.map(ev=>`<div class="commrow"><b>#${ev.seq||""}</b> • ${esc(ev.type)} ${ev.runs!=null?("• "+ev.runs):""} <span class="muted">(${new Date(ev.ts||Date.now()).toLocaleTimeString()})</span></div>`).join("")
-      : `<div class="muted">No ball-by-ball events yet.</div>`;
-  }
-
-  if(RT.ready){
-    subscribeMatch(matchId, (res)=>{
-      if(res.ok) render(res.data);
-      else { banner.style.display="block"; banner.textContent=res.error||"Unable"; render(null); }
+    pinOk?.addEventListener("click", () => {
+      if (pinInput.value === SCORER_PIN) {
+        scorerUnlocked = true;
+        pinModal.style.display = "none";
+        pinMsg.textContent = "";
+        console.log("✅ Scorer unlocked");
+      } else {
+        pinMsg.textContent = "❌ Wrong PIN";
+      }
     });
-  } else render(null);
+
+    pinCancel?.addEventListener("click", (e) => {
+      e.preventDefault();
+      window.location.href = "matches.html";
+    });
+  });
+
+  /***********************
+   * 🔒 LOCK ALL SCORING
+   ***********************/
+  function requireUnlock() {
+    if (!scorerUnlocked) {
+      alert("Please enter PIN to start scoring");
+      return false;
+    }
+    return true;
+  }
+
+  /***********************
+   * EXAMPLE SCORING ACTIONS
+   * (buttons call these)
+   ***********************/
+  window.addRun = function (runs) {
+    if (!requireUnlock()) return;
+    addEvent({ type: "RUN", runs });
+  };
+
+  window.addWicket = function () {
+    if (!requireUnlock()) return;
+    addEvent({ type: "WICKET" });
+  };
+
+  window.addExtra = function (kind) {
+    if (!requireUnlock()) return;
+    addEvent({ type: "EXTRA", extra: kind });
+  };
+
+  /***********************
+   * FIREBASE / DEMO EVENT
+   ***********************/
+  function addEvent(ev) {
+    if (window.RT && RT.ready) {
+      RT.addEvent(matchId, ev);
+    } else {
+      console.log("DEMO EVENT:", ev);
+      alert("Firebase not active – demo mode");
+    }
+  }
+
 })();
