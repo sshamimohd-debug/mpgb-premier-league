@@ -1,30 +1,53 @@
-/**
- * Firebase bootstrap (compat SDK).
- * 1) Create Firebase project
- * 2) Enable Firestore + (optional) Anonymous Auth
- * 3) Paste your firebaseConfig below
- */
+/*************************************************
+ * Firebase bootstrap (NO module, simple JS)
+ *************************************************/
+
+// Firebase configuration (PASTED FROM CONSOLE)
 const firebaseConfig = {
-  apiKey: "PASTE_YOUR_API_KEY",
-  authDomain: "PASTE_YOUR_PROJECT.firebaseapp.com",
-  projectId: "PASTE_YOUR_PROJECT_ID",
-  storageBucket: "PASTE_YOUR_PROJECT.appspot.com",
-  messagingSenderId: "PASTE_SENDER_ID",
-  appId: "PASTE_APP_ID"
+  apiKey: "AIzaSyCWRIDYm4X1pJsp9K-3m6kxRldI2PecHDs",
+  authDomain: "mpgb-premier-league.firebaseapp.com",
+  projectId: "mpgb-premier-league",
+  storageBucket: "mpgb-premier-league.firebasestorage.app",
+  messagingSenderId: "442384671822",
+  appId: "1:442384671822:web:a813ce02cfaa3a63fecf1f"
 };
 
-let FB = { enabled:false, app:null, db:null, auth:null };
+// Global Firebase handle
+window.FB = {
+  enabled: false,
+  app: null,
+  db: null,
+  auth: null
+};
 
-function initFirebase(){
-  try{
-    if(!firebaseConfig || String(firebaseConfig.apiKey||"").startsWith("PASTE_")) return FB;
-    FB.app = firebase.initializeApp(firebaseConfig);
-    FB.db = firebase.firestore();
-    FB.auth = firebase.auth ? firebase.auth() : null;
-    FB.enabled = true;
-    return FB;
-  }catch(e){
-    console.warn("Firebase init failed", e);
-    return FB;
+// Initialize Firebase
+window.initFirebase = function () {
+  try {
+    if (!firebase || !firebase.initializeApp) {
+      console.warn("Firebase SDK not loaded");
+      return window.FB;
+    }
+
+    if (!firebase.apps.length) {
+      window.FB.app = firebase.initializeApp(firebaseConfig);
+    } else {
+      window.FB.app = firebase.app();
+    }
+
+    window.FB.db = firebase.firestore();
+
+    if (firebase.auth) {
+      window.FB.auth = firebase.auth();
+      // Anonymous login for scorer
+      window.FB.auth.signInAnonymously().catch(() => {});
+    }
+
+    window.FB.enabled = true;
+    console.log("Firebase initialized successfully");
+    return window.FB;
+
+  } catch (e) {
+    console.error("Firebase init failed", e);
+    return window.FB;
   }
-}
+};
