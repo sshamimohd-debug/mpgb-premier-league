@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Playing 11 Selection</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: Arial; background:#f5f5f5; padding:15px; }
+    h2 { text-align:center; }
+    select, button { width:100%; padding:10px; margin-top:10px; }
+    .player { background:#fff; padding:8px; margin-top:6px; border-radius:6px; }
+    .locked { color:red; font-weight:bold; text-align:center; margin-top:10px; }
+  </style>
+</head>
+<body>
+
+<h2>🏏 Playing 11 Selection</h2>
+
+<select id="teamSelect">
+  <option value="">-- Team Select करें --</option>
+</select>
+
+<div id="players"></div>
+
+<button onclick="lockPlaying11()">🔒 Lock Playing 11</button>
+
+<div id="msg" class="locked"></div>
+
+<script src="../js/squads.js?v=2026"></script>
+<script src="playing11.js"></script>
+
+</body>
+</html>
