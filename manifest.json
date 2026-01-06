@@ -1,7 +1,7 @@
 {
   "name": "MPGB Premier League 2025-26",
   "short_name": "MPGB PL",
-  "start_url": "./index.html#/home",
+  "start_url": "./matches.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#0b1220",

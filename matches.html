@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Matches • MPGB Premier League</title>
+  <meta name="theme-color" content="#0b1220" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="bt1">MPGB Premier League 2025-26</div>
+      <div class="bt2">Matches</div>
+    </div>
+    <div class="top-actions">
+      <a class="btn ghost" href="index.html#/home">Legacy Tabs</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="card">
+      <div class="row between">
+        <div>
+          <div class="h2">Match List</div>
+          <div class="muted">Tap a match to view live score. Use <b>Score (PIN)</b> for scoring console.</div>
+        </div>
+      </div>
+      <div id="fbBanner" class="banner warn" style="display:none"></div>
+    </div>
+
+    <section id="matchList" class="mlist"></section>
+  </main>
+
+  <footer class="footer">
+    <span>Live view + Scorer console (PIN) • Realtime via Firebase (optional)</span>
+  </footer>
+
+  <script src="data.js"></script>
+
+  <!-- Firebase compat (only used if config is pasted) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+
+  <script src="firebase.js"></script>
+  <script src="scoring_engine.js"></script>
+  <script src="realtime.js"></script>
+  <script src="matches_page.js"></script>
+</body>
+</html>

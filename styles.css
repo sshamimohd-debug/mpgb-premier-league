@@ -235,3 +235,76 @@ textarea{min-height:90px; resize:vertical}
 .mmeta{color:var(--muted);font-size:12px;font-weight:800;margin-top:4px}
 .mrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;color:var(--muted);font-size:12px;font-weight:900}
 .mrow b{color:var(--text)}
+
+/* ===== Mobile-friendly Live + Scorer pages ===== */
+.banner{ padding:10px 12px; border-radius:14px; margin:10px 0; border:1px solid rgba(255,255,255,.12); }
+.banner.warn{ background:rgba(255,180,0,.08); color:#ffd27a; }
+
+.mlist{ display:flex; flex-direction:column; gap:10px; margin-top:12px; }
+.mitem{ border:1px solid rgba(255,255,255,.08); border-radius:16px; padding:12px; background: rgba(255,255,255,.03); }
+.mhead{ display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
+.mtitle{ font-weight:700; }
+.mbadges{ display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
+.pill{ font-size:12px; padding:4px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.10); color: rgba(255,255,255,.82); }
+.pill.live{ border-color: rgba(255,90,90,.35); color:#ffb3b3; background: rgba(255,90,90,.08); }
+.mmeta{ margin-top:6px; color: rgba(255,255,255,.65); font-size:13px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.dot{ opacity:.65; }
+.mactions{ margin-top:10px; display:flex; gap:8px; flex-wrap:wrap; }
+
+.sticky-scorebar{
+  position: sticky;
+  top: 64px; /* below topbar */
+  z-index: 40;
+  backdrop-filter: blur(8px);
+}
+@media (max-width: 768px){
+  .sticky-scorebar{ top: 58px; }
+}
+
+.scoreline{ display:flex; justify-content:space-between; gap:10px; align-items:flex-start; flex-wrap:wrap; }
+.bigscore{ display:flex; gap:14px; align-items:baseline; flex-wrap:wrap; margin-top:8px; }
+.bigscore .runs{ font-size:32px; font-weight:800; letter-spacing:.3px; }
+.bigscore.compact .runs{ font-size:26px; }
+.bigscore .ov{ font-weight:700; color: rgba(255,255,255,.9); }
+.last6{ margin-top:10px; display:flex; gap:6px; flex-wrap:wrap; }
+.ball{ display:inline-flex; align-items:center; justify-content:center; min-width:28px; height:28px; padding:0 8px; border-radius:999px; border:1px solid rgba(255,255,255,.10); background: rgba(255,255,255,.04); font-size:12px; }
+
+.grid2{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px; }
+@media (max-width: 520px){
+  .grid2{ grid-template-columns: 1fr; }
+}
+.box{ border:1px solid rgba(255,255,255,.08); border-radius:14px; padding:10px; background: rgba(0,0,0,.10); }
+
+.comm{ display:flex; flex-direction:column; gap:8px; margin-top:10px; }
+.commrow{ border:1px solid rgba(255,255,255,.07); border-radius:14px; padding:10px; background: rgba(255,255,255,.02); color: rgba(255,255,255,.85); }
+
+.field{ display:flex; flex-direction:column; gap:6px; }
+.field input{ width:100%; border-radius:12px; border:1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.04); color:#fff; padding:10px 12px; outline:none; }
+.field input:focus{ border-color: rgba(120,170,255,.55); }
+
+/* Fixed bottom keypad for scoring */
+.has-fixed-keypad{ padding-bottom: 270px; }
+.scoring-keypad{
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 80;
+  background: rgba(11,18,32,.96);
+  border-top: 1px solid rgba(255,255,255,.10);
+  padding: 10px 10px calc(10px + env(safe-area-inset-bottom));
+}
+.keygrid{ display:grid; grid-template-columns: repeat(6, 1fr); gap:8px; margin-top:8px; }
+.k{ border-radius:14px; padding:12px 10px; border:1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.05); color:#fff; font-weight:700; }
+.k.ghost{ background: rgba(255,255,255,.02); }
+.k.danger{ border-color: rgba(255,90,90,.35); background: rgba(255,90,90,.10); }
+.tiny{ font-size:12px; opacity:.8; }
+
+/* Simple modal */
+.modal{ position: fixed; inset:0; display:none; align-items:center; justify-content:center; padding:18px; z-index: 200; background: rgba(0,0,0,.6); }
+.modal.show{ display:flex; }
+.modal-card{
+  width: min(420px, 100%);
+  border-radius: 18px;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(11,18,32,.98);
+  padding: 14px;
+}

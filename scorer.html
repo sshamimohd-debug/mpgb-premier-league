@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Scorer • MPGB Premier League</title>
+  <meta name="theme-color" content="#0b1220" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="bt1">MPGB Premier League 2025-26</div>
+      <div class="bt2">Scorer Console</div>
+    </div>
+    <div class="top-actions">
+      <a class="btn ghost" id="backLive" href="#">Live</a>
+      <a class="btn ghost" href="matches.html">Matches</a>
+    </div>
+  </header>
+
+  <main class="container has-fixed-keypad">
+    <div id="sticky" class="sticky-scorebar card"></div>
+
+    <div class="card">
+      <div class="row between">
+        <div class="h2">Scorer Setup</div>
+        <button class="btn ghost" id="btnLock">Lock</button>
+      </div>
+      <div class="grid2">
+        <label class="field">
+          <span class="muted">Striker</span>
+          <input id="inStriker" placeholder="Player name" />
+        </label>
+        <label class="field">
+          <span class="muted">Non-striker</span>
+          <input id="inNon" placeholder="Player name" />
+        </label>
+        <label class="field">
+          <span class="muted">Bowler</span>
+          <input id="inBowler" placeholder="Bowler name" />
+        </label>
+        <div class="row gap">
+          <button class="btn" id="btnSetPlayers">Set</button>
+          <button class="btn ghost" id="btnSwap">Swap Strike</button>
+          <button class="btn ghost" id="btnEndOver">End Over</button>
+        </div>
+      </div>
+      <div id="scMsg" class="muted" style="margin-top:8px"></div>
+    </div>
+
+    <div class="card">
+      <div class="h2">Recent</div>
+      <div id="comm" class="comm"></div>
+    </div>
+
+    <div id="fbBanner" class="banner warn" style="display:none"></div>
+
+    <div class="scoring-keypad">
+      <div class="keygrid">
+        <button class="k" data-run="0">0</button>
+        <button class="k" data-run="1">1</button>
+        <button class="k" data-run="2">2</button>
+        <button class="k" data-run="3">3</button>
+        <button class="k" data-run="4">4</button>
+        <button class="k" data-run="6">6</button>
+      </div>
+
+      <div class="keygrid">
+        <button class="k ghost" data-extra="WD">WD</button>
+        <button class="k ghost" data-extra="NB">NB</button>
+        <button class="k ghost" data-extra="BYE">Bye</button>
+        <button class="k ghost" data-extra="LB">LB</button>
+        <button class="k danger" id="btnWicket">Wicket</button>
+        <button class="k ghost" id="btnUndo">Undo</button>
+      </div>
+
+      <div class="muted tiny" style="margin-top:6px">Tip: Score stays on top (sticky). Keypad stays at bottom.</div>
+    </div>
+  </main>
+
+  <!-- PIN modal -->
+  <div class="modal" id="pinModal">
+    <div class="modal-card">
+      <div class="h2">Enter Scorer PIN</div>
+      <div class="muted">PIN is required to start scoring for this match.</div>
+      <input id="pinInput" type="password" inputmode="numeric" placeholder="PIN" style="margin-top:10px" />
+      <div class="row gap" style="margin-top:10px">
+        <button class="btn primary" id="pinOk">Unlock</button>
+        <a class="btn ghost" id="pinCancel" href="#">Cancel</a>
+      </div>
+      <div id="pinMsg" class="muted" style="margin-top:8px"></div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+  <script src="firebase.js"></script>
+  <script src="scoring_engine.js"></script>
+  <script src="realtime.js"></script>
+  <script src="scorer_page.js"></script>
+</body>
+</html>

@@ -1,11 +1,22 @@
-const CACHE = "mpgbpl-cache-v2";
+const CACHE = "mpgbpl-cache-v3";
 const ASSETS = [
   "./",
   "./index.html",
+  "./matches.html",
+  "./live.html",
+  "./scorecard.html",
+  "./scorer.html",
   "./styles.css",
   "./data.js",
   "./storage.js",
   "./app.js",
+  "./firebase.js",
+  "./scoring_engine.js",
+  "./realtime.js",
+  "./matches_page.js",
+  "./live_page.js",
+  "./scorecard_page.js",
+  "./scorer_page.js",
   "./manifest.json",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
