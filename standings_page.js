@@ -51,14 +51,16 @@
     const res = match.result || null;
     if(!res || !res.winner) return;
 
-    const winner = String(res.winner||"").toUpperCase();
-    ta.played += 1; tb.played += 1;
+    const winnerRaw = String(res.winner||"");
+    const winnerUp = winnerRaw.toUpperCase();
 
-    // Head-to-head tracker
-    ta.h2h[B] = ta.h2h[B] || {w:0,l:0,nr:0,t:0};
-    tb.h2h[A] = tb.h2h[A] || {w:0,l:0,nr:0,t:0};
-
-    if(winner === "NR"){
+    // Accept: "A"/"B", team name, "TIE"/"Tie", "NR"/"No result"
+    let winner = "";
+    if(winnerUp === "NR" || winnerUp === "NO RESULT" || winnerUp === "N/R") winner = "NR";
+    else if(winnerUp === "TIE" || winnerUp === "TIED") winner = "TIE";
+    else if(winnerUp === "A" || winnerRaw === A) winner = "A";
+    else if(winnerUp === "B" || winnerRaw === B) winner = "B";
+if(winner === "NR"){
       ta.nr += 1; tb.nr += 1;
       ta.pts += 1; tb.pts += 1;
       ta.h2h[B].nr += 1; tb.h2h[A].nr += 1;

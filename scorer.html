@@ -24,38 +24,88 @@
   <main class="container has-fixed-keypad">
     <div id="sticky" class="sticky-scorebar card"></div>
 
+    <!-- PRE-MATCH / ADMIN SETUP -->
     <div class="card">
       <div class="row between">
-        <div class="h2">Scorer Setup</div>
-        <button class="btn ghost" id="btnLock">Lock</button>
+        <div class="h2">Match Setup</div>
+        <div class="row gap">
+          <button class="btn ghost" id="btnLock">Lock</button>
+          <button class="btn ghost" id="btnResetInnings">Reset Innings</button>
+        </div>
       </div>
+
+      <div class="grid2">
+        <label class="field">
+          <span class="muted">Toss Winner</span>
+          <select id="tossWinnerSel"></select>
+        </label>
+        <label class="field">
+          <span class="muted">Decision</span>
+          <select id="tossDecisionSel">
+            <option value="">Select</option>
+            <option value="BAT">Bat</option>
+            <option value="BOWL">Bowl</option>
+          </select>
+        </label>
+
+        <div class="row gap">
+          <button class="btn" id="btnSaveToss">Save Toss</button>
+          <button class="btn ghost" id="btnStartInnings1">Start Innings 1</button>
+          <button class="btn ghost" id="btnEndInnings">End Innings</button>
+          <button class="btn danger" id="btnFinish">Finalize Result</button>
+        </div>
+      </div>
+
+      <details style="margin-top:10px">
+        <summary class="muted">Squad 15 & Playing XI (demo names now)</summary>
+        <div class="grid2" style="margin-top:10px">
+          <div>
+            <div class="h3" id="xiTitleA">Team A</div>
+            <div class="muted tiny">Select exactly 11</div>
+            <div id="xiA" class="xiBox"></div>
+          </div>
+          <div>
+            <div class="h3" id="xiTitleB">Team B</div>
+            <div class="muted tiny">Select exactly 11</div>
+            <div id="xiB" class="xiBox"></div>
+          </div>
+        </div>
+        <div class="row gap" style="margin-top:10px">
+          <button class="btn" id="btnSaveXI">Save Playing XI</button>
+        </div>
+      </details>
+
+      <div id="scMsg" class="muted" style="margin-top:10px"></div>
+    </div>
+
+    <!-- ON-FIELD SELECTION -->
+    <div class="card">
+      <div class="row between">
+        <div class="h2">On-field Players</div>
+        <div class="muted tiny">Bowler max 2 overs (T10)</div>
+      </div>
+
       <div class="grid2">
         <label class="field">
           <span class="muted">Striker</span>
-          <input id="inStriker" placeholder="Player name" />
+          <select id="strikerSel"></select>
         </label>
         <label class="field">
           <span class="muted">Non-striker</span>
-          <input id="inNon" placeholder="Player name" />
+          <select id="nonSel"></select>
         </label>
         <label class="field">
           <span class="muted">Bowler</span>
-          <input id="inBowler" placeholder="Bowler name" />
+          <select id="bowlerSel"></select>
         </label>
         <div class="row gap">
           <button class="btn" id="btnSetPlayers">Set</button>
           <button class="btn ghost" id="btnSwap">Swap Strike</button>
-          <button class="btn ghost" id="btnEndOver">End Over</button>
-        </div>
-        <div class="row gap" style="margin-top:8px">
-          <button class="btn ghost" id="btnSetMeta">Toss / Batting</button>
-          <button class="btn ghost" id="btnEndInnings">End Innings</button>
-          <button class="btn danger" id="btnFinish">Finish Match</button>
         </div>
       </div>
-      <div id="scMsg" class="muted" style="margin-top:8px"></div>
     </div>
 
+    <!-- RECENT -->
     <div class="card">
       <div class="h2">Recent</div>
       <div id="comm" class="comm"></div>
@@ -63,6 +113,7 @@
 
     <div id="fbBanner" class="banner warn" style="display:none"></div>
 
+    <!-- KEYPAD -->
     <div class="scoring-keypad">
       <div class="keygrid">
         <button class="k" data-run="0">0</button>
@@ -82,9 +133,93 @@
         <button class="k ghost" id="btnUndo">Undo</button>
       </div>
 
-      <div class="muted tiny" style="margin-top:6px">Tip: Score stays on top (sticky). Keypad stays at bottom.</div>
+      <div class="muted tiny" style="margin-top:6px">Tip: Set Playing XI once, then select on-field players from dropdowns.</div>
     </div>
   </main>
+
+  <!-- Wicket modal -->
+  <div class="modal" id="wktModal">
+    <div class="modal-card">
+      <div class="h2">Wicket Details</div>
+
+      <label class="field" style="margin-top:10px">
+        <span class="muted">Kind</span>
+        <select id="wktKind">
+          <option value="Bowled">Bowled</option>
+          <option value="Caught">Caught</option>
+          <option value="LBW">LBW</option>
+          <option value="Run out">Run out</option>
+          <option value="Stumped">Stumped</option>
+          <option value="Hit wicket">Hit wicket</option>
+          <option value="Retired out">Retired out</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span class="muted">Batter out</span>
+        <select id="wktBatter"></select>
+      </label>
+
+      <label class="field">
+        <span class="muted">Fielder (optional)</span>
+        <input id="wktFielder" placeholder="Fielder name"/>
+      </label>
+
+      <label class="field">
+        <span class="muted">Runs on this ball (0-6)</span>
+        <input id="wktRuns" inputmode="numeric" placeholder="0"/>
+      </label>
+
+      <div class="row gap" style="margin-top:10px">
+        <button class="btn danger" id="wktOk">Save Wicket</button>
+        <button class="btn ghost" id="wktCancel">Cancel</button>
+      </div>
+      <div class="muted tiny" style="margin-top:8px">Note: Run-out/Retired-out doesn't credit bowler wicket.</div>
+    </div>
+  </div>
+
+  <!-- Result modal -->
+  <div class="modal" id="resModal">
+    <div class="modal-card">
+      <div class="h2">Finalize Result</div>
+
+      <label class="field" style="margin-top:10px">
+        <span class="muted">Winner</span>
+        <select id="resWinner"></select>
+      </label>
+
+      <label class="field">
+        <span class="muted">Method</span>
+        <select id="resMethod">
+          <option value="Runs">Won by runs</option>
+          <option value="Wickets">Won by wickets</option>
+          <option value="NR">No result</option>
+          <option value="Tie">Tie</option>
+          <option value="Super Over">Super Over</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span class="muted">Margin (e.g., 12 runs / 3 wickets)</span>
+        <input id="resMargin" placeholder=""/>
+      </label>
+
+      <label class="field">
+        <span class="muted">Man of the Match (optional)</span>
+        <input id="resMOM" placeholder=""/>
+      </label>
+
+      <label class="field">
+        <span class="muted">Note (optional)</span>
+        <input id="resNote" placeholder=""/>
+      </label>
+
+      <div class="row gap" style="margin-top:10px">
+        <button class="btn primary" id="resOk">Save Result</button>
+        <button class="btn ghost" id="resCancel">Cancel</button>
+      </div>
+    </div>
+  </div>
 
   <!-- PIN modal -->
   <div class="modal" id="pinModal">
@@ -100,18 +235,13 @@
     </div>
   </div>
 
-    <!-- 🔥 Firebase SDKs (compat – stable) -->
+  <!-- Firebase SDKs (compat) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-  <!-- 🔥 Firebase init/config -->
   <script src="firebase.js"></script>
-
-  <!-- Demo data (fallback only) -->
   <script src="data.js"></script>
-
-  <!-- App logic -->
   <script src="scoring_engine.js"></script>
   <script src="realtime.js"></script>
   <script src="scorer_page.js"></script>

@@ -1,0 +1,11 @@
+# Node
+node_modules/
+npm-debug.log*
+package-lock.json
+
+# Firebase service account key (DO NOT COMMIT)
+serviceAccountKey.json
+
+# Local env
+.DS_Store
+Thumbs.db

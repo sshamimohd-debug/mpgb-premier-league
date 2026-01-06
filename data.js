@@ -1,9 +1,10 @@
-// IOM based data
-// Groups/Venues table from IOM page showing Group A/B/C/D & venue cities. :contentReference[oaicite:6]{index=6}
+// MPGB Premier League – Cricket Tournament 2025-26
+// Master data: Groups, schedule, knockouts, rules.
+
 window.IOM = {
   meta: {
     title: "MPGB Premier League – Cricket Tournament 2025-26",
-    commencement: "10 January 2026", // Annexure-1 shows commencement date :contentReference[oaicite:7]{index=7}
+    commencement: "10 January 2026",
   },
 
   groups: {
@@ -13,8 +14,8 @@ window.IOM = {
     D: { venue: "Gwalior", teams: ["Chhatarpur","Damoh","Gwalior","Satna","Shivpuri","Tikamgarh"] },
   },
 
-  // League schedule table from IOM page 7. :contentReference[oaicite:8]{index=8}
   scheduleDates: ["10 January 2026", "11 January 2026"],
+
   leagueMatches: [
     // Group A (Indore)
     { id:"A1", group:"A", venue:"Indore", time:"9:00 pm", team1:"Sehore", team2:"Dewas" },
@@ -51,17 +52,14 @@ window.IOM = {
     semi1: "Group A Winner vs Group C Winner",
     semi2: "Group B Winner vs Group D Winner",
     final: "Winner SF1 vs Winner SF2",
-  }, // from Knockouts section :contentReference[oaicite:9]{index=9}
+  },
 
   rules: {
-    overs: 10,                 // :contentReference[oaicite:10]{index=10}
-    powerplayOvers: 3,         // :contentReference[oaicite:11]{index=11}
-    bowlerMaxOvers: 2,         // :contentReference[oaicite:12]{index=12}
-    ball: "Tennis ball",       // :contentReference[oaicite:13]{index=13}
-    awards: ["Man of the Match", "Sixer King", "Best Bowler"], // :contentReference[oaicite:14]{index=14}
-    // NOTE: This app also shows a points table (Pts/NRR) for transparency.
-    // Final qualification is still strictly "Group Winner" as per IOM.
-    qualification: "Group A winner vs Group C winner; Group B winner vs Group D winner.",
+    overs: 10,
+    powerplayOvers: 3,
+    bowlerMaxOvers: 2,
+    ball: "Tennis ball",
+    awards: ["Man of the Match", "Sixer King", "Best Bowler"],
     // Tie-break (within a group) for selecting group winner:
     // 1) Points (Win=2, NR=1, Loss=0)
     // 2) Net Run Rate (NRR)
@@ -70,8 +68,10 @@ window.IOM = {
     tieBreak: "Points → NRR → Head-to-Head (if 2-way tie) → Decider match/Super over.",
   }
 };
-// --- Adapter for matches/live/scorer pages (DEMO mode) ---
+
+// --- Adapter for matches/live/scorer pages ---
 window.DATA = window.DATA || {};
+window.DATA.rules = window.IOM.rules;
 window.DATA.schedule = (window.IOM?.leagueMatches || []).map((m, i) => ({
   id: m.id || `m${i+1}`,
   group: m.group || "",
@@ -82,3 +82,27 @@ window.DATA.schedule = (window.IOM?.leagueMatches || []).map((m, i) => ({
   status: m.status || "SCHEDULED"
 }));
 
+// Teams list (unique) – used by roster/nomination UI
+(function(){
+  const set = new Set();
+  Object.values(window.IOM.groups || {}).forEach(g => (g.teams||[]).forEach(t=>set.add(t)));
+  // fallback: infer from schedule
+  (window.DATA.schedule||[]).forEach(m => { if(m.a) set.add(m.a); if(m.b) set.add(m.b); });
+  window.DATA.teams = Array.from(set);
+})();
+
+// Demo squads: 15 players per team (replace later with real names/photos)
+(function(){
+  const mkPlayer = (team, n) => ({
+    id: `${team.toLowerCase().replace(/[^a-z0-9]+/g,'_')}_${String(n).padStart(2,'0')}`,
+    name: `${team} Player ${n}`,
+    // optional role placeholder
+    role: (n===1 ? "WK" : (n<=6 ? "BAT" : (n<=11 ? "AR" : "BOWL"))),
+    photo: null
+  });
+  const squads = {};
+  (window.DATA.teams||[]).forEach(team=>{
+    squads[team] = Array.from({length:15}, (_,i)=>mkPlayer(team, i+1));
+  });
+  window.DATA.squads = squads;
+})();

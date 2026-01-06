@@ -2,7 +2,7 @@
   const $ = (s, el=document)=>el.querySelector(s);
   const esc = (s)=> (s??"").toString().replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const params = new URLSearchParams(location.search);
-  const matchId = params.get("matchId") || "m1";
+  const matchId = params.get("matchId") || "A1";
 
   initRealtime();
 
@@ -15,35 +15,61 @@
     banner.textContent = "Firebase not configured. Live view will show demo (no realtime).";
   }
 
-  function render(doc){
+  function matchFromDoc(doc){
     const m = doc || {};
-    const match = m.a && m.b ? m : (scheduleToMatches().find(x=>x.matchId===matchId) || {a:"Team A", b:"Team B", venue:"", group:""});
-    const st = (m.liveState) || newLiveState({matchId});
+    if(m.a && m.b) return m;
+    return scheduleToMatches().find(x=>x.matchId===matchId) || {a:"Team A", b:"Team B", venue:"", group:""};
+  }
 
-    const innLabel = st.innings===2 ? `Innings 2 • Target ${st.target||"-"}` : `Innings 1`;
-    const chase = (st.innings===2 && st.target!=null)
+  function ensureState(match, doc){
+    const st = (doc?.liveState) || newLiveState({matchId, a:match.a, b:match.b});
+    if(!st.meta) st.meta = {};
+    if(!st.meta.teamA) st.meta.teamA = match.a;
+    if(!st.meta.teamB) st.meta.teamB = match.b;
+    return st;
+  }
+
+  function render(doc){
+    const match = matchFromDoc(doc);
+    const st = ensureState(match, doc);
+
+    const oversLimit = st.meta?.oversLimit || (window.DATA?.rules?.overs||10);
+    const innLabel = st.innings===2 ? `Innings 2` : `Innings 1`;
+    const target = (st.innings===2 && st.target!=null) ? st.target : null;
+
+    const tossLine = (st.meta?.tossWinner && st.meta?.tossDecision)
+      ? `${st.meta.tossWinner} won toss & chose ${st.meta.tossDecision}`
+      : `Toss: not set`;
+
+    const chase = (st.innings===2 && target!=null)
       ? (()=>{
-          const need = Math.max(0, (st.target - st.runs));
-          const ballsLeft = Math.max(0, (10*6) - st.balls);
+          const need = Math.max(0, (target - (st.runs||0)));
+          const ballsLeft = Math.max(0, (oversLimit*6) - (st.balls||0));
           const rrr = ballsLeft>0 ? (need/(ballsLeft/6)) : (need>0?Infinity:0);
-          return `<div class="muted">Need ${need} in ${ballsLeft} balls • RRR ${isFinite(rrr)?rrr.toFixed(2):"-"}</div>`;
+          return `<div class="muted">Target ${target} • Need ${need} in ${ballsLeft} balls • RRR ${isFinite(rrr)?rrr.toFixed(2):"-"}</div>`;
         })()
       : ``;
 
-    const score = `<div class="scoreline">
-      <div class="h2">${esc(match.a)} <span class="muted">vs</span> ${esc(match.b)}</div>
-      <div class="muted">${esc(match.group||"")} • ${esc(match.venue||"")}</div>
-    </div>
-    <div class="bigscore">
-      <div class="muted">${esc(innLabel)}</div>
-      <div class="runs">${st.runs}<span class="muted">/${st.wkts}</span></div>
-      <div class="ov">${oversTextFromBalls(st.balls)} ov</div>
-      <div class="muted">CRR ${crr(st.runs, st.balls).toFixed(2)}</div>
-      ${chase}
-    </div>
-    <div class="last6">${(st.last6||[]).map(x=>`<span class="ball">${esc(x)}</span>`).join("")}</div>
+    const resultLine = st.result?.winner
+      ? `<div class="banner ok" style="margin-top:10px">Result: <b>${esc(st.result.winner)}</b> ${esc(st.result.method||"")} ${esc(st.result.margin||"")} ${st.result.mom?` • MOM: <b>${esc(st.result.mom)}</b>`:""}</div>`
+      : ``;
+
+    $("#sticky").innerHTML = `
+      <div class="scoreline">
+        <div class="h2">${esc(match.a)} <span class="muted">vs</span> ${esc(match.b)}</div>
+        <div class="muted">${esc(match.group||"")} • ${esc(match.venue||"")} • ${esc(match.time||"")}</div>
+        <div class="muted tiny">${esc(tossLine)}</div>
+      </div>
+      <div class="bigscore">
+        <div class="muted">${esc(innLabel)} • Overs ${oversLimit}</div>
+        <div class="runs">${st.runs||0}<span class="muted">/${st.wkts||0}</span></div>
+        <div class="ov">${oversTextFromBalls(st.balls||0)} ov</div>
+        <div class="muted">CRR ${crr(st.runs||0, st.balls||0).toFixed(2)}</div>
+        ${chase}
+      </div>
+      <div class="last6">${(st.last6||[]).map(x=>`<span class="ball">${esc(x)}</span>`).join("")}</div>
+      ${resultLine}
     `;
-    $("#sticky").innerHTML = score;
 
     $("#mini").innerHTML = `
       <div class="grid2">
@@ -61,7 +87,7 @@
         </div>
         <div class="box">
           <div class="muted">Extras</div>
-          <div>WD ${st.extras?.wd||0} • NB ${st.extras?.nb||0} • B ${st.extras?.b||0} • LB ${st.extras?.lb||0}</div>
+          <div>WD ${st.extras?.wd||0} • NB ${st.extras?.nb||0} • B ${st.extras?.b||0} • LB ${st.extras?.lb||0} • PEN ${st.extras?.pen||0}</div>
         </div>
       </div>
     `;
