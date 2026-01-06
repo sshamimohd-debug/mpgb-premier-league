@@ -50,7 +50,17 @@ function lockPlaying11() {
     return;
   }
 
-  // अभी Firebase नहीं, सिर्फ demo lock
-  msg.textContent = "Playing 11 LOCKED ✅ (Firebase next step)";
-  console.log("Playing 11:", selectedPlayers);
+  const team = teamSelect.value;
+
+  // अभी demo के लिए fixed matchId
+  const matchId = "match1";
+
+  savePlaying11(matchId, team, selectedPlayers)
+    .then(() => {
+      msg.textContent = "Playing 11 Firebase में SAVE हो गई ✅";
+    })
+    .catch(error => {
+      alert("Firebase में save करने में error");
+      console.error(error);
+    });
 }
