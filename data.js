@@ -63,3 +63,15 @@ window.IOM = {
     tieBreak: "If top 2 teams in a group have equal points, a deciding match will be played to qualify", // :contentReference[oaicite:16]{index=16}
   }
 };
+// --- Adapter for matches/live/scorer pages (DEMO mode) ---
+window.DATA = window.DATA || {};
+window.DATA.schedule = (window.IOM?.leagueMatches || []).map((m, i) => ({
+  id: m.id || `m${i+1}`,
+  group: m.group || "",
+  a: m.team1 || m.a || "",
+  b: m.team2 || m.b || "",
+  venue: m.venue || "",
+  time: m.time || "",
+  status: m.status || "SCHEDULED"
+}));
+
