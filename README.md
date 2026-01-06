@@ -22,9 +22,15 @@ Deploy:
 This repo now includes separate pages:
 
 - `matches.html` — Match list (entry point)
+- `standings.html` — Points table (Win=2, NR=1, Loss=0) calculated from finished matches
 - `live.html?matchId=m1` — Public live view (compact)
 - `scorecard.html?matchId=m1` — Full scorecard view
 - `scorer.html?matchId=m1` — Scorer console (PIN-protected), bottom keypad + top sticky score
+
+Scorer adds:
+- Toss/Batting setup
+- End innings (auto sets Target for 2nd innings)
+- Finish match (stores Result + ScoreSummary for standings)
 
 ### Firebase (optional, for realtime multi-scorer)
 
@@ -34,6 +40,18 @@ Without Firebase config, pages will run in demo mode (no realtime).
 2) Enable **Firestore**  
 3) (Recommended) Enable **Authentication → Anonymous**  
 4) Paste config in `firebase.js`
+
+Tip: Scorer console includes:
+- **Toss / Batting** (sets who bats first)
+- **End Innings** (starts 2nd innings + sets Target)
+- **Finish Match** (sets status DONE + result + stores scoreSummary used in standings)
+
+### Firestore Security Rules (recommended)
+
+This repo includes a starter `firestore.rules` you can copy into your Firebase project.
+Client-side PIN is only a convenience lock; for stronger security, enforce scorer roles server-side.
+
+Optional (recommended): deploy Firestore rules from `firestore.rules`.
 
 ### Create Match Docs in Firestore (one-time)
 

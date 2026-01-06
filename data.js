@@ -59,8 +59,15 @@ window.IOM = {
     bowlerMaxOvers: 2,         // :contentReference[oaicite:12]{index=12}
     ball: "Tennis ball",       // :contentReference[oaicite:13]{index=13}
     awards: ["Man of the Match", "Sixer King", "Best Bowler"], // :contentReference[oaicite:14]{index=14}
-    qualification: "Each group top 1 team qualifies for semi-final", // :contentReference[oaicite:15]{index=15}
-    tieBreak: "If top 2 teams in a group have equal points, a deciding match will be played to qualify", // :contentReference[oaicite:16]{index=16}
+    // NOTE: This app also shows a points table (Pts/NRR) for transparency.
+    // Final qualification is still strictly "Group Winner" as per IOM.
+    qualification: "Group A winner vs Group C winner; Group B winner vs Group D winner.",
+    // Tie-break (within a group) for selecting group winner:
+    // 1) Points (Win=2, NR=1, Loss=0)
+    // 2) Net Run Rate (NRR)
+    // 3) Head-to-Head result (if exactly two teams are tied)
+    // 4) Decider match / Super over as per tournament committee
+    tieBreak: "Points → NRR → Head-to-Head (if 2-way tie) → Decider match/Super over.",
   }
 };
 // --- Adapter for matches/live/scorer pages (DEMO mode) ---

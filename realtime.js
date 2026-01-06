@@ -103,3 +103,12 @@ async function undoLast(matchId){
     return st;
   });
 }
+
+// Set non-scoring fields (status/meta/result) safely with merge.
+async function setMatchFields(matchId, patch){
+  if(!RT.ready) throw new Error("Firebase not configured");
+  await ensureAnonAuth();
+  const ref = RT.fb.db.collection("matches").doc(matchId);
+  await ref.set({ ...patch, updatedAt: Date.now() }, { merge:true });
+  return true;
+}

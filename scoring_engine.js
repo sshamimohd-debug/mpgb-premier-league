@@ -6,8 +6,18 @@
 function newLiveState(match){
   return {
     matchId: match.matchId,
+    meta: {
+      teamA: match.a || "Team A",
+      teamB: match.b || "Team B",
+      tossWinner: "",
+      tossDecision: "", // BAT/BOWL
+      battingFirst: "", // A/B
+    },
     innings: 1,
     bat: "A",
+    innings1: null,
+    innings2: null,
+    target: null,
     runs: 0,
     wkts: 0,
     balls: 0,
@@ -42,6 +52,40 @@ function applyEvent(state, ev){
     state.nonStriker = { name: ev.nonStriker||"", r:0,b:0,f4:0,f6:0 };
     state.bowler = { name: ev.bowler||"", balls:0,runs:0,wkts:0 };
     state.commentary.unshift("Players set");
+    return state;
+  }
+
+  if(ev.type==="SET_META"){
+    state.meta = state.meta || {};
+    if(ev.teamA!=null) state.meta.teamA = ev.teamA;
+    if(ev.teamB!=null) state.meta.teamB = ev.teamB;
+    if(ev.tossWinner!=null) state.meta.tossWinner = ev.tossWinner;
+    if(ev.tossDecision!=null) state.meta.tossDecision = ev.tossDecision;
+    if(ev.battingFirst!=null) state.meta.battingFirst = ev.battingFirst;
+    if(ev.bat!=null) state.bat = ev.bat;
+    state.commentary.unshift("Match meta set");
+    return state;
+  }
+
+  if(ev.type==="END_INNINGS"){
+    const summary = { runs: state.runs, wkts: state.wkts, balls: state.balls };
+    if(state.innings===1){
+      state.innings1 = summary;
+      state.target = summary.runs + 1;
+      state.innings = 2;
+      state.bat = (state.bat==="A") ? "B" : "A";
+    }else{
+      state.innings2 = summary;
+    }
+
+    // Reset ball-by-ball counters for next innings (if any)
+    state.runs = 0; state.wkts = 0; state.balls = 0;
+    state.last6 = [];
+    state.striker = { name:"", r:0, b:0, f4:0, f6:0 };
+    state.nonStriker = { name:"", r:0, b:0, f4:0, f6:0 };
+    state.bowler = { name:"", balls:0, runs:0, wkts:0 };
+    state.extras = { wd:0, nb:0, b:0, lb:0 };
+    state.commentary.unshift(state.innings2 ? "Match innings ended" : "Innings ended");
     return state;
   }
 

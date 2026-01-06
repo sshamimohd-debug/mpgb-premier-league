@@ -20,14 +20,26 @@
     const match = m.a && m.b ? m : (scheduleToMatches().find(x=>x.matchId===matchId) || {a:"Team A", b:"Team B", venue:"", group:""});
     const st = (m.liveState) || newLiveState({matchId});
 
+    const innLabel = st.innings===2 ? `Innings 2 • Target ${st.target||"-"}` : `Innings 1`;
+    const chase = (st.innings===2 && st.target!=null)
+      ? (()=>{
+          const need = Math.max(0, (st.target - st.runs));
+          const ballsLeft = Math.max(0, (10*6) - st.balls);
+          const rrr = ballsLeft>0 ? (need/(ballsLeft/6)) : (need>0?Infinity:0);
+          return `<div class="muted">Need ${need} in ${ballsLeft} balls • RRR ${isFinite(rrr)?rrr.toFixed(2):"-"}</div>`;
+        })()
+      : ``;
+
     const score = `<div class="scoreline">
       <div class="h2">${esc(match.a)} <span class="muted">vs</span> ${esc(match.b)}</div>
       <div class="muted">${esc(match.group||"")} • ${esc(match.venue||"")}</div>
     </div>
     <div class="bigscore">
+      <div class="muted">${esc(innLabel)}</div>
       <div class="runs">${st.runs}<span class="muted">/${st.wkts}</span></div>
       <div class="ov">${oversTextFromBalls(st.balls)} ov</div>
       <div class="muted">CRR ${crr(st.runs, st.balls).toFixed(2)}</div>
+      ${chase}
     </div>
     <div class="last6">${(st.last6||[]).map(x=>`<span class="ball">${esc(x)}</span>`).join("")}</div>
     `;

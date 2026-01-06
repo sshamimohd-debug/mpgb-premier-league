@@ -35,12 +35,14 @@
     const match = doc?.a && doc?.b ? doc : (scheduleToMatches().find(x=>x.matchId===matchId) || {a:"Team A", b:"Team B", venue:"", group:""});
     const st = doc?.liveState || newLiveState({matchId});
 
+    const innLabel = st.innings===2 ? `Innings 2 • Target ${st.target||"-"}` : `Innings 1`;
     $("#sticky").innerHTML = `
       <div class="scoreline">
         <div class="h2">${esc(match.a)} <span class="muted">vs</span> ${esc(match.b)}</div>
         <div class="muted">${esc(match.group||"")} • ${esc(match.venue||"")}</div>
       </div>
       <div class="bigscore">
+        <div class="muted">${esc(innLabel)}</div>
         <div class="runs">${st.runs}<span class="muted">/${st.wkts}</span></div>
         <div class="ov">${oversTextFromBalls(st.balls)} ov</div>
         <div class="muted">CRR ${crr(st.runs, st.balls).toFixed(2)}</div>
@@ -79,6 +81,67 @@
     unlocked=false;
     sessionStorage.removeItem(key);
     showPin();
+  });
+
+  // Toss / Batting meta
+  $("#btnSetMeta").addEventListener("click", async ()=>{
+    if(!(await requireUnlock())) return;
+    const teamA = lastDoc?.a || scheduleToMatches().find(x=>x.matchId===matchId)?.a || "Team A";
+    const teamB = lastDoc?.b || scheduleToMatches().find(x=>x.matchId===matchId)?.b || "Team B";
+    const tw = prompt(`Toss winner (type exactly):\nA: ${teamA}\nB: ${teamB}`, teamA);
+    if(tw===null) return;
+    const tossWinner = tw;
+    const tossDecision = (prompt("Toss decision: BAT or BOWL", "BAT") || "BAT").toUpperCase();
+    const battingFirst = (prompt(`Who bats first?\nType A for ${teamA} or B for ${teamB}`, "A") || "A").toUpperCase()==="B"?"B":"A";
+    try{
+      await writeEvent(matchId, {
+        type:"SET_META",
+        teamA,
+        teamB,
+        tossWinner: tossWinner.trim(),
+        tossDecision,
+        battingFirst,
+        bat: battingFirst,
+      });
+      await setMatchFields(matchId, { a: teamA, b: teamB, status:"LIVE" });
+      $("#scMsg").textContent="Match meta set.";
+    }catch(e){ $("#scMsg").textContent=e.message; }
+  });
+
+  // End innings / start 2nd
+  $("#btnEndInnings").addEventListener("click", async ()=>{
+    if(!(await requireUnlock())) return;
+    if(!confirm("End current innings? This will reset the inning counters and (if innings 1) start innings 2.")) return;
+    try{
+      await writeEvent(matchId, {type:"END_INNINGS"});
+      $("#scMsg").textContent="Innings ended.";
+    }catch(e){ $("#scMsg").textContent=e.message; }
+  });
+
+  // Finish match (sets result/status)
+  $("#btnFinish").addEventListener("click", async ()=>{
+    if(!(await requireUnlock())) return;
+    const teamA = lastDoc?.a || "Team A";
+    const teamB = lastDoc?.b || "Team B";
+    const winner = (prompt(`Result?\nType: A for ${teamA}\nB for ${teamB}\nTIE / NR`, "A") || "").toUpperCase();
+    if(!winner) return;
+    const how = prompt("Result note (e.g., won by 12 runs / 3 wkts / tie)", "") || "";
+    try{
+      const st = lastDoc?.liveState || newLiveState({matchId});
+      // If scorer ends after innings reset, try to use innings1/innings2 stored in state
+      const scoreSummary = {
+        innings1: st.innings1 || null,
+        innings2: st.innings2 || null,
+        target: st.target || null,
+        meta: st.meta || {},
+      };
+      await setMatchFields(matchId, {
+        status: "DONE",
+        result: { winner, how, at: Date.now() },
+        scoreSummary
+      });
+      $("#scMsg").textContent="Match finished.";
+    }catch(e){ $("#scMsg").textContent=e.message; }
   });
 
   $("#pinOk").addEventListener("click", async ()=>{

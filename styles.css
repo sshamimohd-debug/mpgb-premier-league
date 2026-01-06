@@ -308,3 +308,10 @@ textarea{min-height:90px; resize:vertical}
   background: rgba(11,18,32,.98);
   padding: 14px;
 }
+
+/* Tables (Standings) */
+.tablewrap{ overflow:auto; -webkit-overflow-scrolling:touch; }
+.tbl{ width:100%; border-collapse:collapse; min-width:520px; }
+.tbl th, .tbl td{ text-align:left; padding:10px 8px; border-bottom:1px solid rgba(255,255,255,.08); }
+.tbl th{ font-size:12px; letter-spacing:.04em; text-transform:uppercase; color: rgba(255,255,255,.75); }
+.tbl td{ color: rgba(255,255,255,.90); }

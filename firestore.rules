@@ -1,0 +1,15 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /matches/{matchId} {
+      // Public read for live views
+      allow read: if true;
+
+      // Basic write guard: require anonymous auth.
+      // IMPORTANT: For true security, enforce PIN / scorer-role server-side
+      // (custom auth / callable function / validated claims). Client-side PIN
+      // is only a convenience lock.
+      allow create, update, delete: if request.auth != null;
+    }
+  }
+}
